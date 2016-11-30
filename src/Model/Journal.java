@@ -26,6 +26,7 @@ public class Journal implements Serializable
     {
         return arr.get(ID);
     }
+    
     public Set<Integer> getIDs()
     {
         return arr.keySet();

@@ -276,10 +276,4 @@ public class MainScreen extends javax.swing.JFrame implements View {
     {
         JOptionPane.showMessageDialog(this, e.toString(), "Eггог", JOptionPane.ERROR_MESSAGE);
     }
-
-    @Override
-    public void showNotification(Task t) 
-    {
-        JOptionPane.showMessageDialog(this, t.getName() + "\n" + t.getText() + "\n" + t.getDate(), "Notification", JOptionPane.INFORMATION_MESSAGE);
-    }
 }

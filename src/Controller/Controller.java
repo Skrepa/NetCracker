@@ -19,7 +19,8 @@ import Model.Task.Status;
 import View.MainScreen;
 import View.View;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import snoozesoft.systray4j.SysTrayMenu;
 import snoozesoft.systray4j.SysTrayMenuEvent;
 import snoozesoft.systray4j.SysTrayMenuIcon;
@@ -36,11 +37,11 @@ public class Controller implements SysTrayMenuListener {
 
     private Journal journal;
 
-    View view;
-        
-    static HashMap<Integer, Status> statuses = new HashMap<Integer, Status>();
+    private View view;
 
     private SysTrayMenu menu;
+    
+    NotificationManager notificationManager;
     
     public static synchronized Controller getInstance() {
         if (instance == null) {
@@ -65,6 +66,8 @@ public class Controller implements SysTrayMenuListener {
                 view.showException(e);
             }
         }
+        notificationManager = new NotificationManager(journal);
+        notificationManager.start();
     }
 
     public void createTask(String name, String author, Date data, long time, String text) 
@@ -146,7 +149,6 @@ public class Controller implements SysTrayMenuListener {
                 out.writeObject(journal);
                 out.flush();
             } catch (IOException e) {
-
                 if (view != null) {
                     view.showException(e);
                 } else {
@@ -159,31 +161,9 @@ public class Controller implements SysTrayMenuListener {
     public static void main(String[] args) {
         getInstance().createMenu();
         getInstance().openView();
-
-        while (true) {
-            Set<Integer> ids = getInstance().journal.getIDs();
-            for (int id : ids) {
-                Task task = getInstance().journal.getTask(id);
-                if (statuses.containsKey(task.getID())) {
-                    if (statuses.get(task.getID()) != task.getStatus()) {
-                        if (getInstance().view != null) {
-                            getInstance().view.update(getInstance().journal);
-                        }
-                    }
-                    if (task.getStatus() != Status.ACTIVE && statuses.get(task.getID()) == Status.ACTIVE) {
-                        getInstance().openView();
-                        getInstance().view.showNotification(task);
-                        statuses.replace(task.getID(), task.getStatus());
-                    }
-                } else {
-                    statuses.put(task.getID(), task.getStatus());
-                }
-            }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-                return;
-            }
+        try {
+            getInstance().notificationManager.join();
+        } catch (InterruptedException ex) {
         }
     }
 
@@ -205,13 +185,13 @@ public class Controller implements SysTrayMenuListener {
     @Override
     public void menuItemSelected(SysTrayMenuEvent stme) 
     {
-        getInstance().openView();
+        openView();
     }
 
     @Override
     public void iconLeftClicked(SysTrayMenuEvent stme) 
     {
-        getInstance().openView();
+        openView();
     }
 
     @Override

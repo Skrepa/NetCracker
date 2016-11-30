@@ -19,7 +19,7 @@ public class Task implements Serializable
     private String text;
     private Date date;
     private long time;
-    private int id;
+    final private int id;
     
     public enum Status 
     {

@@ -19,6 +19,4 @@ public interface View
     void showException(Exception e);
     
     void setVisible(boolean b);
-    
-    public void showNotification(Task t) ;
 }
