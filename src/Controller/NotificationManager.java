@@ -5,7 +5,6 @@
  */
 package Controller;
 
-import static Controller.Controller.getInstance;
 import Model.Journal;
 import Model.Task;
 import View.Notification;
@@ -13,18 +12,24 @@ import java.util.HashMap;
 import java.util.Set;
 
 /**
- *
+ * класс для обработки нотификации
  * @author Daniil
  */
 public class NotificationManager extends Thread {
 
-    Journal journal = null;
-    static HashMap<Integer, Task.Status> statuses = new HashMap<Integer, Task.Status>();
-
+    private Journal journal = null;
+    private static HashMap<Integer, Task.Status> statuses = new HashMap<Integer, Task.Status>();
+    /**
+     * конструктор обработки нотификации
+     * @param journal обрабатываемый журнал
+     */
     public NotificationManager(Journal journal) {
         this.journal = journal;
     }
-
+    /**
+     * обновление обрабатываемого журнала
+     * @param journal обрабатываемый журнал
+     */
     public void update(Journal journal) {
         this.journal = journal;
     }

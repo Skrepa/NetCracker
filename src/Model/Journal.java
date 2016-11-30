@@ -10,31 +10,42 @@ import java.util.HashMap;
 import java.util.Set;
 
 /**
- *
+ * журнал содержащий события
  * @author Даниил
  */
-public class Journal implements Serializable
-{
-    private HashMap<Integer,Task> arr = new HashMap<>();
+public class Journal implements Serializable {
 
-    public void addTask(Task task)
-    {
+    private HashMap<Integer, Task> arr = new HashMap<>();
+
+    /**
+     * добавление события
+     * @param task
+     */
+    public void addTask(Task task) {
         arr.put(task.getID(), task);
     }
-    
-    public Task getTask(int ID)
-    {
+    /**
+     * получение события по идентификатору
+     * @param ID идентификатор
+     * @return событие
+     */
+    public Task getTask(int ID) {
         return arr.get(ID);
     }
-    
-    public Set<Integer> getIDs()
-    {
+    /**
+     * @return все идентификаторы
+     */
+    public Set<Integer> getIDs() {
         return arr.keySet();
     }
-    
-    public void deleteTask(int ID)
-    {
-        if(!arr.containsKey(ID)) throw new IndexOutOfBoundsException();
+    /**
+     * удаление события по его идентификатору
+     * @param ID идентификатор
+     */
+    public void deleteTask(int ID) {
+        if (!arr.containsKey(ID)) {
+            throw new IndexOutOfBoundsException();
+        }
         arr.remove(ID);
     }
 }

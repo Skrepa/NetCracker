@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- *
+ * событие
  * @author Даниил
  */
 public class Task implements Serializable 
@@ -23,11 +23,22 @@ public class Task implements Serializable
     
     public enum Status 
     {
+        /**
+         * событие было добавлено но еще не началось
+         */
         ACTIVE,
+        /**
+         * событие в процессе 
+         */
         IN_PROGRESS,
+        /**
+         * событие завершено
+         */
         COMPLETED
     }
-
+    /**
+     * @return статус события
+     */
     public Status getStatus() 
     {
         Date left = new Date(getDate().getTime() - getTime() * 1000);
@@ -40,37 +51,56 @@ public class Task implements Serializable
         }
         return Status.COMPLETED;
     }
-
+    /**
+     * @return идентификатор
+     */
     public int getID() 
     {
         return id;
     }
-
+    /**
+     * @param author автор события
+     */
     public void setAuthor(String author) 
     {
         this.author = author;
     }
-
+    /**
+     * @param name имя автора
+     */
     public void setName(String name) 
     {
         this.name = name;
     }
-
+    /**
+     * @param text текст события
+     */
     public void setText(String text) 
     {
         this.text = text;
     }
-
+    /**
+     * @param date дата события
+     */
     public void setDate(Date date) 
     {
         this.date = date;
     }
-
+    /**
+     * @param time время за которое нужно предупредить о событии
+     */
     public void setTime(long time) 
     {
         this.time = time;
     }
-
+    /**
+     * конструктор
+     * @param name название события
+     * @param author имя автора
+     * @param data дата события
+     * @param time время за которое нужно предупредить о событии
+     * @param text текст события
+     */
     public Task(String name, String author, Date data, long time, String text) 
     {
         id = IDManager.nextID();
@@ -80,32 +110,50 @@ public class Task implements Serializable
         this.date = data;
         this.time = time;
     }
-
+    /**
+     * @return имя автора
+     */
     public String getAuthor() 
     {
         return author;
     }
-
+    /**
+     * 
+     * @return название события
+     */
     public String getName() 
     {
         return name;
     }
-
+    /**
+     * 
+     * @return текст события
+     */
     public String getText() 
     {
         return text;
     }
-
+    /**
+     * 
+     * @return дата события
+     */
     public Date getDate() 
     {
         return date;
     }
-
+    /**
+     * 
+     * @return время за которое нужно предупредить о событии
+     */
     public long getTime() 
     {
         return time;
     }
-
+    /**
+     * сравнение объекта по параметру
+     * @param o событие
+     * @return true or false
+     */
     @Override
     public boolean equals(Object o) 
     {
@@ -133,7 +181,10 @@ public class Task implements Serializable
         }
         return true;
     }
-
+    /**
+     * преобразование в строку
+     * @return строка содержащая имя автора, название события, дату события, за какое время до события нужно о нем напомнить и текст события
+     */
     @Override
     public String toString() 
     {

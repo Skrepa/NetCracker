@@ -15,12 +15,8 @@ import java.io.ObjectOutputStream;
 import java.util.Date;
 import Model.Journal;
 import Model.Task;
-import Model.Task.Status;
 import View.MainScreen;
 import View.View;
-import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import snoozesoft.systray4j.SysTrayMenu;
 import snoozesoft.systray4j.SysTrayMenuEvent;
 import snoozesoft.systray4j.SysTrayMenuIcon;
@@ -28,7 +24,7 @@ import snoozesoft.systray4j.SysTrayMenuItem;
 import snoozesoft.systray4j.SysTrayMenuListener;
 
 /**
- *
+ * класс для управления всей программой
  * @author Даниил
  */
 public class Controller implements SysTrayMenuListener {
@@ -42,7 +38,10 @@ public class Controller implements SysTrayMenuListener {
     private SysTrayMenu menu;
     
     NotificationManager notificationManager;
-    
+    /**
+     * 
+     * @return singleton instance
+     */
     public static synchronized Controller getInstance() {
         if (instance == null) {
             instance = new Controller();
@@ -69,7 +68,14 @@ public class Controller implements SysTrayMenuListener {
         notificationManager = new NotificationManager(journal);
         notificationManager.start();
     }
-
+    /**
+     * создание события
+     * @param name название события
+     * @param author автор события
+     * @param data дата события
+     * @param time время за которое нужно напомнить о событии
+     * @param text текст события
+     */
     public void createTask(String name, String author, Date data, long time, String text) 
     {
         try {
@@ -85,7 +91,10 @@ public class Controller implements SysTrayMenuListener {
             }
         }
     }
-
+    /**
+     * удаление события
+     * @param ID идентификатор события
+     */
     public void deleteTask(int ID) 
     {
 
@@ -105,7 +114,15 @@ public class Controller implements SysTrayMenuListener {
             }
         }
     }
-
+    /**
+     * изменение события
+     * @param ID идентификатор события
+     * @param name название события
+     * @param author автор события
+     * @param data дата события
+     * @param time время за которое нужно напомнить о событии
+     * @param text текст события
+     */
     public void setTask(int ID, String name, String author, Date data, long time, String text) 
     {
         {
@@ -127,7 +144,11 @@ public class Controller implements SysTrayMenuListener {
         }
 
     }
-
+    /**
+     * получение события по его идентфиатору
+     * @param ID
+     * @return событие
+     */
     public Task getTask(int ID) 
     {
         try {
@@ -139,7 +160,9 @@ public class Controller implements SysTrayMenuListener {
             throw e;
         }
     }
-
+    /**
+     * сохранение журнала
+     */
     public synchronized void save() 
     {
         synchronized (journal) 
@@ -181,7 +204,7 @@ public class Controller implements SysTrayMenuListener {
         menu = new SysTrayMenu(new SysTrayMenuIcon("View/icon.ico"), "SysTray for Java rules!");
         menu.addItem(itemOpen);
     }
-
+  
     @Override
     public void menuItemSelected(SysTrayMenuEvent stme) 
     {

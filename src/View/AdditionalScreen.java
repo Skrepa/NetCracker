@@ -13,7 +13,7 @@ import java.time.ZoneId;
 import java.util.Date;
 
 /**
- *
+ * экран редактирования событий
  * @author Даниил
  */
 public class AdditionalScreen extends javax.swing.JDialog 

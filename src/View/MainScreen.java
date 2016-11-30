@@ -16,7 +16,7 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * главный экран программы
  * @author Даниил
  */
 public class MainScreen extends javax.swing.JFrame implements View {
@@ -255,7 +255,10 @@ public class MainScreen extends javax.swing.JFrame implements View {
         }
         return "";
     }
-
+    /**
+     * обновление обрабатываемого журнала
+     * @param journal журнал событий
+     */
     @Override
     public void update(Journal journal) 
     {
@@ -270,7 +273,10 @@ public class MainScreen extends javax.swing.JFrame implements View {
 
         }
     }
-
+    /**
+     * показать сообщение об ошибке пользователю
+     * @param e сообщение ошибки
+     */
     @Override
     public void showException(Exception e) 
     {
