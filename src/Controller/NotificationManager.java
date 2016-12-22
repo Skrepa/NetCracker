@@ -8,6 +8,7 @@ package Controller;
 import Model.Journal;
 import Model.Task;
 import View.Notification;
+import View.View;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -17,37 +18,29 @@ import java.util.Set;
  */
 public class NotificationManager extends Thread {
 
-    private Journal journal = null;
-    private static HashMap<Integer, Task.Status> statuses = new HashMap<Integer, Task.Status>();
-    /**
-     * конструктор обработки нотификации
-     * @param journal обрабатываемый журнал
-     */
-    public NotificationManager(Journal journal) {
-        this.journal = journal;
-    }
-    /**
-     * обновление обрабатываемого журнала
-     * @param journal обрабатываемый журнал
-     */
-    public void update(Journal journal) {
-        this.journal = journal;
-    }
+    private HashMap<Integer, Task.Status> statuses = new HashMap<Integer, Task.Status>();
+    
+    private View view;
+    
+    private Journal journal;
 
+    /**
+     * Изменение статуса и обновление окна журнала
+     */
     @Override
     public void run() {
-        while (true) {
-            Set<Integer> ids = journal.getIDs();
+        while (!isInterrupted()) {
+            Set<Integer> ids = Controller.getInstance().getJournal().getIDs();
             for (int id : ids) {
-                Task task = journal.getTask(id);
+                Task task = Controller.getInstance().getJournal().getTask(id);
                 if (statuses.containsKey(task.getID())) {
                     if (statuses.get(task.getID()) != task.getStatus()) {
-                        Controller.getInstance().setTask(task.getID(), task.getName(), task.getAuthor(), task.getDate(), task.getTime(), task.getText());
+                        Controller.getInstance().update();
                     }
                     if (task.getStatus() != Task.Status.ACTIVE && statuses.get(task.getID()) == Task.Status.ACTIVE) {
                         Notification.getInstance().show(task);
-                        statuses.replace(task.getID(), task.getStatus());
                     }
+                    statuses.replace(task.getID(), task.getStatus());
                 } else {
                     statuses.put(task.getID(), task.getStatus());
                 }
