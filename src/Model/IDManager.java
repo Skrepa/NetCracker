@@ -7,6 +7,7 @@ package Model;
 
 import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * генератор идентификаторов
@@ -26,10 +27,17 @@ public class IDManager {
         int id;
         do 
         {
-            id = rand.nextInt();
+            id = rand.nextInt(Integer.MAX_VALUE);
         } 
-        while (used.contains(id) || id < 0);
+        while (used.contains(id));
         return id;
+    }
+    /**
+     * загрузка старых ID
+     * @param set старые ID
+     */
+    public static void addUsed(Set<Integer> set){
+        used.addAll(set);
     }
 
 }

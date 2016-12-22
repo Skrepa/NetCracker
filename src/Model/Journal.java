@@ -5,6 +5,7 @@
  */
 package Model;
 
+import exception.NonexistentIDException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Set;
@@ -42,9 +43,13 @@ public class Journal implements Serializable {
      * удаление события по его идентификатору
      * @param ID идентификатор
      */
-    public void deleteTask(int ID) {
+    public void deleteTask(int ID)  {
         if (!arr.containsKey(ID)) {
-            throw new IndexOutOfBoundsException();
+           
+            try {
+                throw new NonexistentIDException();
+            } catch (NonexistentIDException ex) {}
+            
         }
         arr.remove(ID);
     }
