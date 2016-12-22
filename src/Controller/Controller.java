@@ -5,6 +5,7 @@
  */
 package Controller;
 
+import Model.IDManager;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
@@ -17,27 +18,22 @@ import Model.Journal;
 import Model.Task;
 import View.MainScreen;
 import View.View;
-import snoozesoft.systray4j.SysTrayMenu;
-import snoozesoft.systray4j.SysTrayMenuEvent;
-import snoozesoft.systray4j.SysTrayMenuIcon;
-import snoozesoft.systray4j.SysTrayMenuItem;
-import snoozesoft.systray4j.SysTrayMenuListener;
+import exception.UnspecifiedEventException;
 
 /**
  * класс для управления всей программой
  * @author Даниил
  */
-public class Controller implements SysTrayMenuListener {
+public class Controller {
 
     private static Controller instance;
 
     private Journal journal;
 
     private View view;
-
-    private SysTrayMenu menu;
     
-    NotificationManager notificationManager;
+    private static final String FileName = "TaskManager.file";
+    
     /**
      * 
      * @return singleton instance
@@ -48,12 +44,11 @@ public class Controller implements SysTrayMenuListener {
         }
         return instance;
     }
-    static final String fileName = "TaskManager.file";
-
+    
     private Controller() 
     {
         journal = new Journal();
-        try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fileName)))) 
+        try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(FileName)))) 
         {
             journal = (Journal) in.readObject();
         } catch (IOException e) {
@@ -65,11 +60,10 @@ public class Controller implements SysTrayMenuListener {
                 view.showException(e);
             }
         }
-        notificationManager = new NotificationManager(journal);
-        notificationManager.start();
+        IDManager.addUsed(journal.getIDs());
     }
     /**
-     * создание события
+     * Создание события
      * @param name название события
      * @param author автор события
      * @param data дата события
@@ -82,7 +76,7 @@ public class Controller implements SysTrayMenuListener {
             Task task = new Task(name, author, data, time, text);
             journal.addTask(task);
             save();
-            view.update(journal);
+            update();
         } catch (Exception e) {
             if (view != null) {
                 view.showException(e);
@@ -92,30 +86,28 @@ public class Controller implements SysTrayMenuListener {
         }
     }
     /**
-     * удаление события
+     * Удаление события
      * @param ID идентификатор события
      */
-    public void deleteTask(int ID) 
+    public void deleteTask(int ID)
     {
 
         try {
             if (journal.getTask(ID) == null) {
-                throw new RuntimeException("Вы не выбрали напоминание для удаления");
+                throw new UnspecifiedEventException("Вы не выбрали напоминание для удаления");
             }
             journal.deleteTask(ID);
 
             save();
-            view.update(journal);
-        } catch (Exception e) {
+            update();
+        } catch (UnspecifiedEventException e) {
             if (view != null) {
                 view.showException(e);
-            } else {
-                throw e;
             }
         }
     }
     /**
-     * изменение события
+     * Изменение события
      * @param ID идентификатор события
      * @param name название события
      * @param author автор события
@@ -127,13 +119,14 @@ public class Controller implements SysTrayMenuListener {
     {
         {
             try {
-                journal.getTask(ID).setName(name);
-                journal.getTask(ID).setAuthor(author);
-                journal.getTask(ID).setDate(data);
-                journal.getTask(ID).setTime(time);
-                journal.getTask(ID).setText(text);
+                Task task = journal.getTask(ID);
+                task.setName(name);
+                task.setAuthor(author);
+                task.setDate(data);
+                task.setTime(time);
+                task.setText(text);
                 save();
-                view.update(journal);
+                update();
             } catch (Exception e) {
                 if (view != null) {
                     view.showException(e);
@@ -167,7 +160,7 @@ public class Controller implements SysTrayMenuListener {
     {
         synchronized (journal) 
         {
-            try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(fileName))))
+            try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(FileName))))
             {
                 out.writeObject(journal);
                 out.flush();
@@ -180,45 +173,25 @@ public class Controller implements SysTrayMenuListener {
             }
         }
     }
-
-    public static void main(String[] args) {
-        getInstance().createMenu();
-        getInstance().openView();
-        try {
-            getInstance().notificationManager.join();
-        } catch (InterruptedException ex) {
-        }
-    }
-
-    private void openView() 
+    /**
+     * Открытие окна журнала
+     */
+    public void openView() 
     {
         this.view = new MainScreen();
         view.setVisible(true);
-        view.update(journal);
+        update();
     }
-
-    private void createMenu() 
-    {
-        SysTrayMenuItem itemOpen = new SysTrayMenuItem("Open", "Open");
-        itemOpen.addSysTrayMenuListener(this);
-        menu = new SysTrayMenu(new SysTrayMenuIcon("View/icon.ico"), "SysTray for Java rules!");
-        menu.addItem(itemOpen);
+    /**
+     * Получение журнала
+     * @return журнал
+     */
+    public Journal getJournal(){
+        return journal;
     }
-  
-    @Override
-    public void menuItemSelected(SysTrayMenuEvent stme) 
-    {
-        openView();
+    public void update(){
+        if(view!=null)
+            view.update(journal);
     }
-
-    @Override
-    public void iconLeftClicked(SysTrayMenuEvent stme) 
-    {
-        openView();
-    }
-
-    @Override
-    public void iconLeftDoubleClicked(SysTrayMenuEvent stme) 
-    {
-    }
+    
 }
