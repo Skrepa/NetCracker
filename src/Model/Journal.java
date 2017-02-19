@@ -9,6 +9,7 @@ import exception.NonexistentIDException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * журнал содержащий события
@@ -17,6 +18,8 @@ import java.util.Set;
 public class Journal implements Serializable {
 
     private HashMap<Integer, Task> arr = new HashMap<>();
+    
+    private static final Logger log = Logger.getLogger(Journal.class.getName());
 
     /**
      * добавление события
@@ -45,12 +48,13 @@ public class Journal implements Serializable {
      */
     public void deleteTask(int ID)  {
         if (!arr.containsKey(ID)) {
-           
-            try {
+           try {
                 throw new NonexistentIDException();
-            } catch (NonexistentIDException ex) {}
-            
+            } catch (NonexistentIDException ex) {
+                log.info("Такой идентификатор не существует");
+            }
         }
         arr.remove(ID);
     }
 }
+   

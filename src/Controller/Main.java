@@ -74,10 +74,6 @@ public class Main implements SysTrayMenuListener {
         notificationManager.start();
         mainObject.createMenu();
         Controller.getInstance().openView();
-        try {
-            notificationManager.join();
-        } catch (InterruptedException ex) {
-        }
     }
 
 }

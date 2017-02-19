@@ -11,6 +11,7 @@ import View.Notification;
 import View.View;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * класс для обработки нотификации
@@ -23,6 +24,8 @@ public class NotificationManager extends Thread {
     private View view;
     
     private Journal journal;
+
+    private static final Logger log = Logger.getLogger(Journal.class.getName());
 
     /**
      * Изменение статуса и обновление окна журнала
@@ -48,7 +51,7 @@ public class NotificationManager extends Thread {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {
-                return;
+                log.info(ex.getMessage());
             }
         }
     }
